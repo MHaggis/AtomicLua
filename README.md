@@ -11,6 +11,10 @@ Welcome to the LuaJIT for Defenders project! This repository is dedicated to pro
 
 The primary goal of this project is to facilitate an understanding and utilization of LuaJIT for security applications. LuaJIT is a Just-In-Time Compiler for the Lua programming language, offering substantial performance benefits. This project uses GitHub Actions to automate the building and testing of LuaJIT on Windows, ensuring that every push and pull request is verified against our rigorous standards.
 
+**Disclaimer:**
+This project is intended for educational purposes only. The tools, scripts, and methodologies contained within this repository should be used responsibly. Users should ensure they have proper authorization before deploying any tool or script in a live environment. Misuse of this project can result in potential legal consequences. The creators and contributors of AtomicLua are not responsible for unauthorized or illegal use of these tools.
+Also, this is made for defenders/blue team. 
+
 ## Getting Started
 
 ### Prerequisites
