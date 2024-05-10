@@ -1,0 +1,54 @@
+name: Build LuaJIT for Windows
+
+on:
+  push:
+    branches-ignore: [] 
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v3
+
+    - name: Set up MSVC
+      uses: ilammy/msvc-dev-cmd@v1
+
+    - name: Copy AtomicLua and OffensiveLua files to src
+      run: |
+        Copy-Item -Path "AtomicLua/**/*.c" -Destination "src" -Recurse -Force
+        Copy-Item -Path "AtomicLua/**/*.lua" -Destination "src" -Recurse -Force
+
+    - name: Build LuaJIT
+      run: |
+        cd src
+        .\msvcbuild.bat
+
+    - name: Set up LuaJIT path
+      run: |
+        echo "${{ github.workspace }}/src" | Out-File -Append -Encoding utf8 $env:GITHUB_PATH
+
+    - name: Compile Lua scripts to bytecode
+      run: |
+        Get-ChildItem *.lua -Recurse | ForEach-Object {
+          .\luajit.exe -b $_.FullName "$($_.DirectoryName)\$($_.BaseName).byte"
+        }
+      working-directory: src
+
+    - name: Compile Loader Application
+      run: |
+        gcc loader.c -o loader.exe -L. -llua51 -I.
+        gcc LuaLoader.c -o LuaLoader.exe -L. -llua51 -I.
+      working-directory: src
+
+    - name: Archive production artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: lua-binaries
+        path: |
+          src/*.byte
+          src/lua51.dll
+          src/luajit.exe
+          src/LuaLoader.exe
